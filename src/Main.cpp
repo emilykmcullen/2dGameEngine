@@ -4,18 +4,17 @@
 using namespace std;
 
 int main(int argc, char *args[]) {
-    Game *game = new Game();
+    Game game;
     
-    game->Initialize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    game.Initialize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    while (game -> IsRunning()){
-        game->ProcessInput();
-        game->Update();
-        game->Render();
-
+    while (game.IsRunning()){
+        game.ProcessInput();
+        game.Update();
+        game.Render();
     } 
 
-    game->Destroy();
+    game.Destroy();
 
     return 0;
 }
