@@ -19,5 +19,6 @@ class Game {
         void Update();
         void Render();
         void Destroy();
-}
+};
+
 #endif
