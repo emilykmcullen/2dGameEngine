@@ -1,6 +1,7 @@
 #include <iostream>
 #include "./Constants.h"
 #include "./Game.h"
+#include "../lib/glm/glm.hpp"
 using namespace std;
 
 Game::Game(){
@@ -15,10 +16,8 @@ bool Game::IsRunning() const {
     return this->isRunning;
 }
 
-float projectilePosX = 0.0f;
-float projectilePosY = 0.0f;
-float projectileVelX = 0.5f;
-float projectileVelY = 0.5f;
+glm::vec2 projectilePos = glm::vec2(0.0f, 0.0f);
+glm::vec2 projectileVel = glm::vec2(20.0f, 20.0f);
 
 void Game::Initialize(int width, int height) {
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0){
@@ -67,17 +66,31 @@ void Game::ProcessInput(){
 }
 
 void Game::Update(){
-    //Wait until 16ms have elapsed since the last frame
-    while(!SDL_TICKS_PASSED(SDL_GetTicks(), ticksLastFrame + FRAME_TARGET_TIME));
+    // while(!SDL_TICKS_PASSED(SDL_GetTicks(), ticksLastFrame + FRAME_TARGET_TIME));
+
+    //Sleep the execution until we reach the target frame time in milliseconds
+    int timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - ticksLastFrame);
+
+    //Only call delay if we are too fast to process this frame
+    if(timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME){
+        SDL_Delay(timeToWait);
+    }
     
     // delta time is the difference in ticks from the last frame, converted to seconds
     float deltaTime =(SDL_GetTicks() - ticksLastFrame)/1000.0f;
 
+    //Clamp deltaTime to a maximum value
+    deltaTime = (deltaTime > 0.05f) ? 0.05f : deltaTime;
+
+
     //Sets the new ticks for the current frame to be used in the next pass
     ticksLastFrame = SDL_GetTicks();
 
-    projectilePosX += projectileVelX * deltaTime;
-    projectilePosY += projectileVelY * deltaTime;
+    //Use deltaTime to update my game objects
+    projectilePos = glm::vec2(
+        projectilePos.x + projectileVel.x * deltaTime,
+        projectilePos.y + projectileVel.y * deltaTime
+    );
 }
 
 void Game::Render(){
@@ -85,8 +98,8 @@ void Game::Render(){
     SDL_RenderClear(renderer);
 
     SDL_Rect projectile {
-        (int) projectilePosX,
-        (int) projectilePosY,
+        (int) projectilePos.x,
+        (int) projectilePos.y,
         10,
         10
     };
