@@ -20,7 +20,7 @@ void Entity::Render(){
     }
 }
 
-void Destroy(){
+void Entity::Destroy(){
     this->isActive = false;
 }
 
