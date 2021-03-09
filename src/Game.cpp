@@ -4,6 +4,7 @@
 #include "../lib/glm/glm.hpp"
 using namespace std;
 #include "EntityManager.h"
+#include "./Components/TransformComponent.h"
 
 
 EntityManager manager;
@@ -45,8 +46,17 @@ void Game::Initialize(int width, int height) {
         return;
     }
 
+    LoadLevel(0);
+
     isRunning = true;
     return;
+}
+
+void Game::LoadLevel(int levelNumber){
+    //add entities and add components to entities
+    Entity& newEntity(manager.AddEntity("player"));
+
+    newEntity.AddComponent<TransformComponent>(0,0,20,20,32,32,1);
 }
 
 void Game::ProcessInput(){
@@ -89,17 +99,18 @@ void Game::Update(){
     //Sets the new ticks for the current frame to be used in the next pass
     ticksLastFrame = SDL_GetTicks();
 
-    //TO DO:
-    //Here we call the manager.update to update all entities as fucntion of deltaTime
-    
+    manager.Update(deltaTime);
 }
 
 void Game::Render(){
     SDL_SetRenderDrawColor(renderer, 21, 21,21 , 255);
     SDL_RenderClear(renderer);
 
-    //TO DO
-    // Here we call the manager.render to render all entities
+    if(manager.HasNoEntities()){
+        return;
+    }
+    manager.Render();
+
     SDL_RenderPresent(renderer);
 }
 
