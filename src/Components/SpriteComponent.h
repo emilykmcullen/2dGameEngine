@@ -18,7 +18,7 @@ class SpriteComponent: public Component {
             SetTexture(filePath);
         }
 
-        void SetTexture(std::string assetTexureId){
+        void SetTexture(std::string assetTextureId){
             texture = Game::assetManager->GetTexture(assetTextureId);
         }
 

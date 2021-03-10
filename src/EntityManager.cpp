@@ -1,4 +1,5 @@
 #include "./EntityManager.h"
+#include <iostream>
 
 void EntityManager::ClearData(){
     for (auto& entity: entities){
@@ -26,6 +27,15 @@ Entity& EntityManager::AddEntity(std::string entityName){
     Entity *entity = new Entity(*this, entityName);
     entities.emplace_back(entity);
     return *entity;
+}
+
+void EntityManager::ListAllEntities() const {
+    unsigned int i = 0;
+    for(auto& entity: entities){
+        std::cout<< "Entity Name[" << i << "]" << entity->name << std::endl;
+        entity->ListAllComponents();
+        i++;
+    }
 }
 
 std::vector<Entity*> EntityManager::GetEntities() const {

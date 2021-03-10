@@ -50,7 +50,7 @@ void Game::Initialize(int width, int height) {
     }
 
     LoadLevel(0);
-
+    manager.ListAllEntities();
     isRunning = true;
     return;
 }
@@ -58,12 +58,24 @@ void Game::Initialize(int width, int height) {
 void Game::LoadLevel(int levelNumber){
     //Start including new assets to the assetmanager list
     std::string textureFilePath = "./assets/images/tank-big-right.png";
+    std::string textureFilePath1 = "./assets/images/rock-big-1.png";
+    std::string textureFilePath2 = "./assets/images/tree-small-1.png";
     assetManager->AddTexture("tank-image", textureFilePath.c_str());
+    assetManager->AddTexture("rock-image", textureFilePath1.c_str());
+    assetManager->AddTexture("tree-image", textureFilePath2.c_str());
 
     //add entities and add components to entities
     Entity& newEntity(manager.AddEntity("tank"));
     newEntity.AddComponent<TransformComponent>(0,0,20,20,32,32,1);
     newEntity.AddComponent<SpriteComponent>("tank-image");
+
+    Entity& newEntity1(manager.AddEntity("rock"));
+    newEntity1.AddComponent<TransformComponent>(140,500,50,10,32,32,1);
+    newEntity1.AddComponent<SpriteComponent>("rock-image");
+
+    Entity& newEntity2(manager.AddEntity("tree"));
+    newEntity2.AddComponent<TransformComponent>(50,50,60,5,32,32,1);
+    newEntity2.AddComponent<SpriteComponent>("tree-image");
 }
 
 void Game::ProcessInput(){
