@@ -56,10 +56,14 @@ void Game::Initialize(int width, int height) {
 }
 
 void Game::LoadLevel(int levelNumber){
-    //add entities and add components to entities
-    Entity& newEntity(manager.AddEntity("player"));
+    //Start including new assets to the assetmanager list
+    std::string textureFilePath = "./assets/images/tank-big-right.png";
+    assetManager->AddTexture("tank-image", textureFilePath.c_str());
 
+    //add entities and add components to entities
+    Entity& newEntity(manager.AddEntity("tank"));
     newEntity.AddComponent<TransformComponent>(0,0,20,20,32,32,1);
+    newEntity.AddComponent<SpriteComponent>("tank-image");
 }
 
 void Game::ProcessInput(){
