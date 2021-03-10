@@ -5,9 +5,12 @@
 using namespace std;
 #include "EntityManager.h"
 #include "./Components/TransformComponent.h"
+#include "./Components/SpriteComponent.h"
+#include "./AssetManager.h"
 
 
 EntityManager manager;
+AssetManager* Game::assetManager = new AssetManager(&manager);
 SDL_Renderer* Game::renderer;
 
 Game::Game(){
