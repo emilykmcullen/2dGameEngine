@@ -37,7 +37,18 @@ class SpriteComponent: public Component {
             this->isFixed = isFixed;
 
             if(hasDirections){
-                //TO DO
+                Animation downAnimation = Animation(0, numFrames, animationSpeed);
+                Animation rightAnimation = Animation(1, numFrames, animationSpeed);
+                Animation leftAnimation = Animation(2, numFrames, animationSpeed);
+                Animation upAnimation = Animation(3, numFrames, animationSpeed);
+
+                animations.emplace("DownAnimation", downAnimation);
+                animations.emplace("RightAnimation", rightAnimation);
+                animations.emplace("LeftAnimation", leftAnimation);
+                animations.emplace("UpAnimation", upAnimation);
+
+                this->animationIndex = 0;
+                this->currentAnimationName = "Down";
             }
             else {
                 Animation singleAnimation = Animation(0, numFrames, animationSpeed);
@@ -69,11 +80,16 @@ class SpriteComponent: public Component {
         }
 
         void Update(float deltaTime) override {
-            destinationRectangle.x = (int) transform->position.x;
-            destinationRectangle.y = (int) transform->position.y;
+            if (isAnimated) {
+                sourceRectangle.x = (sourceRectangle.w * (SDL_GetTicks()/animationSpeed)%numFrames);
+            }
+            sourceRectangle.y = animationIndex * transform->height;
+            destinationRectangle.x = static_cast<int>(transform->position.x);
+            destinationRectangle.y = static_cast<int>(transform->position.y);
             destinationRectangle.w = transform->width * transform->scale;
             destinationRectangle.h = transform->height * transform->scale;
         }
+        
 
         void Render() override {
             TextureManager::Draw(texture, sourceRectangle, destinationRectangle, spriteFlip);
