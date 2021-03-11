@@ -48,7 +48,7 @@ class SpriteComponent: public Component {
                 animations.emplace("UpAnimation", upAnimation);
 
                 this->animationIndex = 0;
-                this->currentAnimationName = "Down";
+                this->currentAnimationName = "DownAnimation";
             }
             else {
                 Animation singleAnimation = Animation(0, numFrames, animationSpeed);
@@ -81,7 +81,7 @@ class SpriteComponent: public Component {
 
         void Update(float deltaTime) override {
             if (isAnimated) {
-                sourceRectangle.x = (sourceRectangle.w * (SDL_GetTicks()/animationSpeed)%numFrames);
+                sourceRectangle.x = sourceRectangle.w * static_cast<int>((SDL_GetTicks()/animationSpeed)%numFrames);
             }
             sourceRectangle.y = animationIndex * transform->height;
             destinationRectangle.x = static_cast<int>(transform->position.x);
