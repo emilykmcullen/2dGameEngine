@@ -57,25 +57,20 @@ void Game::Initialize(int width, int height) {
 
 void Game::LoadLevel(int levelNumber){
     //Start including new assets to the assetmanager list
-    std::string textureFilePath = "./assets/images/tank-big-right.png";
     std::string textureFilePath1 = "./assets/images/rock-big-1.png";
     std::string textureFilePath2 = "./assets/images/tree-small-1.png";
-    assetManager->AddTexture("tank-image", textureFilePath.c_str());
-    assetManager->AddTexture("rock-image", textureFilePath1.c_str());
-    assetManager->AddTexture("tree-image", textureFilePath2.c_str());
+    assetManager->AddTexture("tank-image", std::string("./assets/images/tank-big-right.png").c_str());
+    assetManager->AddTexture("chopper-image", std::string("./assets/images/chopper-spritesheet.png").c_str());
 
     //add entities and add components to entities
-    Entity& newEntity(manager.AddEntity("tank"));
-    newEntity.AddComponent<TransformComponent>(0,0,20,20,32,32,1);
-    newEntity.AddComponent<SpriteComponent>("tank-image");
+    Entity& tankEntity(manager.AddEntity("tank"));
+    tankEntity.AddComponent<TransformComponent>(0,0,20,20,32,32,1);
+    tankEntity.AddComponent<SpriteComponent>("tank-image");
 
-    Entity& newEntity1(manager.AddEntity("rock"));
-    newEntity1.AddComponent<TransformComponent>(140,500,50,10,32,32,1);
-    newEntity1.AddComponent<SpriteComponent>("rock-image");
+    Entity& chopperEnitity(manager.AddEntity("chopper"));
+    chopperEnitity.AddComponent<TransformComponent>(240,106, 0,0,32,32,1);
+    chopperEnitity.AddComponent<SpriteComponent>("chopper-image");
 
-    Entity& newEntity2(manager.AddEntity("tree"));
-    newEntity2.AddComponent<TransformComponent>(50,50,60,5,32,32,1);
-    newEntity2.AddComponent<SpriteComponent>("tree-image");
 }
 
 void Game::ProcessInput(){
