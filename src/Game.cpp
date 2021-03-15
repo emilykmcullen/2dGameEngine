@@ -7,11 +7,12 @@ using namespace std;
 #include "./Components/TransformComponent.h"
 #include "./Components/SpriteComponent.h"
 #include "./AssetManager.h"
-
+#include "./Components/KeyboardControlComponent.h"
 
 EntityManager manager;
 AssetManager* Game::assetManager = new AssetManager(&manager);
 SDL_Renderer* Game::renderer;
+SDL_Event Game::event;
 
 Game::Game(){
     this->isRunning =false;
@@ -68,11 +69,11 @@ void Game::LoadLevel(int levelNumber){
     Entity& chopperEnitity(manager.AddEntity("chopper"));
     chopperEnitity.AddComponent<TransformComponent>(240,106, 0,0,32,32,1);
     chopperEnitity.AddComponent<SpriteComponent>("chopper-image", 2, 90, true, false);
+    chopperEnitity.AddComponent<KeyboardControlComponent>("up", "right", "down", "left", "space");
 
 }
 
 void Game::ProcessInput(){
-    SDL_Event event;
     SDL_PollEvent(&event);
     switch (event.type){
         case SDL_QUIT:{
