@@ -20,15 +20,15 @@ void Map::LoadMap(std::string filePath, int mapSizeX, int mapSizeY){
     //y for rows, x for columns in the file
     //for each row, and for inside each row each column get the character one by one
     //after getting the char convert from string to int and times by the tile size (32)
-    for (int y = 0; y < mapSizeY; y ++){
-        for (int x = 0; x < mapSizeX; x ++){
+    for (int y = 0; y < mapSizeY; y++) {
+        for (int x = 0; x < mapSizeX; x++) {
             char ch;
             mapFile.get(ch);
             int sourceRectY = atoi(&ch) * tileSize;
             mapFile.get(ch);
             int sourceRectX = atoi(&ch) * tileSize;
-            AddTile(sourceRectX, sourceRectX, x * (scale * tileSize), y * (scale * tileSize));
-            mapFile.ignore();
+            AddTile(sourceRectX, sourceRectY, x * (scale * tileSize), y * (scale * tileSize));
+            mapFile.ignore();            
         }
     }
     mapFile.close();
@@ -36,6 +36,6 @@ void Map::LoadMap(std::string filePath, int mapSizeX, int mapSizeY){
 
 void Map::AddTile(int sourceRectX, int sourceRectY, int x, int y){
     //ADD NEW TILE ENTITY IN THE GAME SCENE
-    Entity& newTile(manager.AddEntity("Tile"));
+    Entity& newTile(manager.AddEntity("Tile", TILEMAP_LAYER));
     newTile.AddComponent<TileComponent>(sourceRectX, sourceRectY, x, y, tileSize, scale, textureId);
 }
