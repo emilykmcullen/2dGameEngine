@@ -26,7 +26,7 @@ class TileComponent: public Component {
             destinationRectangle.h = tileSize * tileScale;
 
             position.x = x;
-            position.x = y;
+            position.y = y;
 
         }
 
