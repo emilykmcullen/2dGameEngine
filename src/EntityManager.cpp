@@ -1,5 +1,7 @@
 #include "./EntityManager.h"
 #include <iostream>
+#include "./Collision.h"
+#include "./Components/ColliderComponent.h"
 
 void EntityManager::ClearData(){
     for (auto& entity: entities){
@@ -29,6 +31,24 @@ Entity& EntityManager::AddEntity(std::string entityName, LayerType layer){
     Entity *entity = new Entity(*this, entityName, layer);
     entities.emplace_back(entity);
     return *entity;
+}
+
+//loop over all entities and check if they are colliding with the entity that is passed as a parameter (most probably the player)
+std::string EntityManager::CheckEntityCollisions(Entity& myEntity) const {
+    ColliderComponent* myCollider = myEntity.GetComponent<ColliderComponent>();
+    for (auto* entity: entities){
+        //dont check if colliding with itself and dont check collision with tiles
+        if (entity->name.compare(myEntity.name) != 0 && entity->name.compare("Tile") != 0){
+            if (entity->HasComponent<ColliderComponent>()){
+            ColliderComponent* otherCollider = entity->GetComponent<ColliderComponent>();
+            if (Collision::CheckRectangleCollision(myCollider->collider, otherCollider->collider)){
+                return otherCollider->colliderTag;
+            }
+        }
+        }
+        
+    }
+    return std::string();
 }
 
 void EntityManager::ListAllEntities() const {

@@ -9,6 +9,7 @@ using namespace std;
 #include "./AssetManager.h"
 #include "./Components/KeyboardControlComponent.h"
 #include "./Map.h"
+#include "./Components/ColliderComponent.h"
 
 EntityManager manager;
 AssetManager* Game::assetManager = new AssetManager(&manager);
@@ -76,10 +77,12 @@ void Game::LoadLevel(int levelNumber){
     Entity& tankEntity(manager.AddEntity("tank", ENEMY_LAYER));
     tankEntity.AddComponent<TransformComponent>(0,0,20,20,32,32,1);
     tankEntity.AddComponent<SpriteComponent>("tank-image");
+    tankEntity.AddComponent<ColliderComponent>("enemy", 0, 0, 32, 32);
 
     player.AddComponent<TransformComponent>(240,106, 0,0,32,32,1);
     player.AddComponent<SpriteComponent>("chopper-image", 2, 90, true, false);
     player.AddComponent<KeyboardControlComponent>("up", "right", "down", "left", "space");
+    player.AddComponent<ColliderComponent>("player", 240, 106, 32, 32);
     
     
     }
@@ -126,6 +129,7 @@ void Game::Update(){
     manager.Update(deltaTime);
 
     HandleCameraMovement();
+    CheckCollisions();
 }
 
 void Game::Render(){
@@ -153,7 +157,16 @@ void Game::HandleCameraMovement() {
     camera.y = camera.y > camera.h ? camera.h : camera.y;
 }
 
-void Game::Destroy(){
+void Game::CheckCollisions() {
+    std::string collisionTagType = manager.CheckEntityCollisions(player);
+
+    if (collisionTagType.compare("enemy") == 0){
+        //TO DO: do something when collision is identified with an enemy
+        isRunning = false;
+    }
+}
+
+void Game::Destroy() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
