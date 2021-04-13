@@ -12,6 +12,7 @@ class ColliderComponent: public Component {
         SDL_Rect sourceRectangle;
         SDL_Rect destinationRectangle;
         TransformComponent* transform;
+        
 
         ColliderComponent(std::string colliderTag, int x, int y, int width, int height) {
             this->colliderTag = colliderTag;
@@ -36,4 +37,8 @@ class ColliderComponent: public Component {
             destinationRectangle.y = collider.y - Game::camera.y;
         }
 
+        void Render() override {
+            SDL_SetRenderDrawColor(Game::renderer, 255,255,255,255);
+            SDL_RenderDrawRect(Game::renderer, &collider);
+        }
 };
