@@ -129,3 +129,19 @@ void Quadtree::insert(SDL_Rect* pRect) {
         }
     }
 }
+
+//RETURN ALL OBJECTS IN ALL NODES THAT COULD COLLIDE WITH THE GIVEN OBJECT
+std::vector<SDL_Rect*> Quadtree::retrieve(std::vector<SDL_Rect*> returnObjects, SDL_Rect* pRect){
+    int index = getIndex(pRect);
+    //if we have child nodes and the pRect can fit completely into one of them:
+    if ( index != -1 && nodes[0] != nullptr) {
+        //go to the node at that index and call the function again
+        //this keeps going until there are no more nodes or the index is -1 (so it is overlapping the bounds)
+        nodes[index]->retrieve(returnObjects, pRect);
+    }
+
+    //when index is -1 or there are no child nodes, all the objects at this node are added to returnObjects
+    returnObjects.insert(returnObjects.end(), objects.begin(), objects.end());
+
+    return returnObjects;
+}

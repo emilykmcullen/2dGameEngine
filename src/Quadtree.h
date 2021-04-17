@@ -24,7 +24,7 @@ class Quadtree {
         Quadtree(int level, SDL_Rect& bounds);
         void clear();
         void insert(SDL_Rect* pRect);
-        std::vector<SDL_Rect*> retrieve;
+        std::vector<SDL_Rect*> retrieve(std::vector<SDL_Rect*> returnObjects, SDL_Rect* pRect);
         
         
 
