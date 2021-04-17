@@ -36,3 +36,42 @@ void Quadtree::split(){
     nodes[2] = new Quadtree(level + 1,  rectTwo);
     nodes[3] = new Quadtree(level + 1,  rectThree);
 }
+
+
+//DETERMINE WHICH NODE WITHIN THE BOUNDS THE OBJECT BELONGS TO
+//-1 means the object cannot completely fit within a child node and is part of the parent node
+int Quadtree::getIndex(SDL_Rect& pRect){
+    int index = -1;
+    double verticalMidpoint = bounds.x + (bounds.w/2);
+    double horizontalMidpoint = bounds.y + (bounds.h/2);
+
+    //Object can fit completely within the top quadrants
+    bool topQuadrant = (pRect.y < horizontalMidpoint && pRect.y + pRect.h < horizontalMidpoint);
+    //Object can fit completely within the bottom quadrants
+    bool bottomQuadrant = (pRect.y > horizontalMidpoint);
+
+    //Object can fit within the left quadrants
+    if (pRect.x < verticalMidpoint && pRect.x + pRect.w < verticalMidpoint){
+        if (topQuadrant){
+            index = 1; //top left quadrant
+        }
+        else if (bottomQuadrant){
+            index = 2; //bottom left quadrant
+        }
+    }
+
+    //Object can fit completely within the right quadrants
+    if (pRect.x > verticalMidpoint){
+        if (topQuadrant){
+            index = 0; //top right quadrant
+        }
+        else if (bottomQuadrant) {
+            index = 3; //bottom right quadrant
+        }
+    }
+
+    return index;
+    
+
+
+}

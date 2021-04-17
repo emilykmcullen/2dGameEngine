@@ -17,7 +17,7 @@ class Quadtree {
         Quadtree* nodes[4];
         //using an array because I know how many elements I need
         //also remember vectors/arrays cannot hold references!
-        
+        void split();
         int getIndex(SDL_Rect& pRect);
     
     public:
@@ -25,7 +25,7 @@ class Quadtree {
         void clear();
         void insert(SDL_Rect& pRect);
         std::vector<SDL_Rect*> retrieve;
-        void split();
+        
         
 
         
