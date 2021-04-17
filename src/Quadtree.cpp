@@ -2,12 +2,16 @@
 #include <SDL2/SDL.h>
 #include<vector>
 #include <list>
+using namespace std;
 
 Quadtree::Quadtree(int level, SDL_Rect& bounds) : level(level), bounds(bounds) {
     
 }
 
 void Quadtree::clear(){
+    for (auto obj : objects){
+        delete obj;
+    }
     objects.clear();
 
     for (int i=0; i< sizeof(nodes); i++) {
@@ -40,10 +44,12 @@ void Quadtree::split(){
 
 //DETERMINE WHICH NODE WITHIN THE BOUNDS THE OBJECT BELONGS TO
 //-1 means the object cannot completely fit within a child node and is part of the parent node
-int Quadtree::getIndex(SDL_Rect& pRect){
+int Quadtree::getIndex(SDL_Rect* theRect){
     int index = -1;
     double verticalMidpoint = bounds.x + (bounds.w/2);
     double horizontalMidpoint = bounds.y + (bounds.h/2);
+    //dereference
+    SDL_Rect &pRect = *theRect;
 
     //Object can fit completely within the top quadrants
     bool topQuadrant = (pRect.y < horizontalMidpoint && pRect.y + pRect.h < horizontalMidpoint);
@@ -71,7 +77,55 @@ int Quadtree::getIndex(SDL_Rect& pRect){
     }
 
     return index;
-    
 
+}
 
+//INSERT THE OBJECT INTO THE QUADTREE
+//If the node exceeds the capacity it will split and add all the objects to their corresponding nodes
+
+void Quadtree::insert(SDL_Rect* pRect) {
+    //do this current node have nodes? if yes:
+    if (nodes[0] != nullptr) {
+        int index = getIndex(pRect);
+        //get appropriate index using the position of the rect
+        if (index != -1) {
+            nodes[index]->insert(pRect);
+            //inserts the object in the node at this index, so it's now in the node tree in the correct node
+            return;
+        }
+    }
+
+    //if there are no child nodes or the object doesn't fit into a child node (goes over the bounds borders)
+    //adds pRect into the objects list for the current (parent) node
+    objects.emplace_back(pRect);
+
+    //has the node overflown with objects?
+    if (objects.size() > maxObjects && level < maxLevels) {
+        if (nodes[0] == nullptr) {
+            //does this node have subnodes? if not split it into subnodes
+            split();
+        }
+
+        int i=0;
+        while (i < objects.size()) {
+            //loop through all the objects in the list and get the index of each
+            
+            int index = getIndex(objects.at(i));
+            //if index is not -1, insert the object into the new node and remove form objects list in current node
+            //so any objects that can fit completely into the child nodes are put there
+            //and any that cant (they cross over the bounds borders) stay in the current (parent) node
+            if (index != 1) {
+                //to be checked
+                SDL_Rect* copiedRect = objects.at(i);
+                nodes[index]->insert(copiedRect);
+                delete objects.at(i);
+                objects.at(i) = nullptr;
+                objects.erase(objects.begin() + i);
+                
+            }
+            else {
+                i++;
+            }
+        }
+    }
 }
