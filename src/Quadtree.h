@@ -3,6 +3,8 @@
 #include <SDL2/SDL.h>
 #include<vector>
 #include <list>
+#include <memory>
+using namespace std;
 
 class Quadtree {
     private:
@@ -10,12 +12,12 @@ class Quadtree {
         int maxLevels = 5;
 
         int level; //current node level
-        std::vector<SDL_Rect*> objects;
+        std::vector<unique_ptr<SDL_Rect>> objects;
         SDL_Rect bounds;
         Quadtree* nodes[4];
         //using an array because I know how many elements I need
         //also remember vectors/arrays cannot hold references!
-        void split();
+        
         int getIndex(SDL_Rect& pRect);
     
     public:
@@ -23,6 +25,7 @@ class Quadtree {
         void clear();
         void insert(SDL_Rect& pRect);
         std::vector<SDL_Rect*> retrieve;
+        void split();
         
 
         
