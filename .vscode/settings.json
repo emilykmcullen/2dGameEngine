@@ -69,7 +69,8 @@
         "vector": "cpp",
         "deque": "cpp",
         "fstream": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "list": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

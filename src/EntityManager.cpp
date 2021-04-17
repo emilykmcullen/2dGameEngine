@@ -33,6 +33,12 @@ Entity& EntityManager::AddEntity(std::string entityName, LayerType layer){
     return *entity;
 }
 
+
+
+//CHECK IF ENTITY HAS COLLIDER COMPONENT 
+//COULD CHANGE QUADTREE CLASS AND METHODS TO CONTAIN ENTITIES (instead of rects in the objects vector) AND TO ACCESS THE COLLIDER COMPONENTS DEST RECTANGLE
+//GET COMPONENT AND THEN GET THE DEST RECT
+
 //loop over all entities and check if they are colliding with the entity that is passed as a parameter (most probably the player)
 std::string EntityManager::CheckEntityCollisions(Entity& myEntity) const {
     ColliderComponent* myCollider = myEntity.GetComponent<ColliderComponent>();
@@ -62,6 +68,16 @@ void EntityManager::ListAllEntities() const {
 
 std::vector<Entity*> EntityManager::GetEntities() const {
     return entities;
+}
+
+std::vector<Entity*> EntityManager::GetNonTileEntities() const {
+    std::vector<Entity*> selectedEntities;
+    for (auto& entity: entities){
+        if (entity->layer != 0){
+            selectedEntities.emplace_back(entity);
+        }
+    }
+    return selectedEntities;
 }
 
 std::vector<Entity*> EntityManager::GetEntitiesByLayer(LayerType layer) const {

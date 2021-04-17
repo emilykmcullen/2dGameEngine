@@ -1,9 +1,11 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 #include <SDL2/SDL.h>
+#include "Game.h"
 #include<vector>
 #include <list>
 #include <memory>
+#include "Entity.h"
 using namespace std;
 
 class Quadtree {
@@ -12,19 +14,19 @@ class Quadtree {
         int maxLevels = 5;
 
         int level; //current node level
-        std::vector<SDL_Rect*> objects;
+        std::vector<Entity*> entities;
         SDL_Rect bounds;
         Quadtree* nodes[4];
         //using an array because I know how many elements I need
         //also remember vectors/arrays cannot hold references!
         void split();
-        int getIndex(SDL_Rect* pRect);
+        int getIndex(Entity* entity);
     
     public:
-        Quadtree(int level, SDL_Rect& bounds);
-        void clear();
-        void insert(SDL_Rect* pRect);
-        std::vector<SDL_Rect*> retrieve(std::vector<SDL_Rect*> returnObjects, SDL_Rect* pRect);
+        Quadtree(int level, SDL_Rect bounds); //does bounds need to be a ref?
+        void clearMe();
+        void insert(Entity* entity);
+        std::vector<Entity*> retrieve(std::vector<Entity*> returnObjects, Entity* entity);
         
         
 

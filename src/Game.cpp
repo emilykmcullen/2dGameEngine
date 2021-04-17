@@ -10,6 +10,7 @@ using namespace std;
 #include "./Components/KeyboardControlComponent.h"
 #include "./Map.h"
 #include "./Components/ColliderComponent.h"
+#include "./Quadtree.h"
 
 EntityManager manager;
 AssetManager* Game::assetManager = new AssetManager(&manager);
@@ -17,6 +18,7 @@ SDL_Renderer* Game::renderer;
 SDL_Event Game::event;
 SDL_Rect Game::camera = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 Map* map;
+Quadtree quad(0, SDL_Rect{0, 0, WINDOW_WIDTH, WINDOW_HEIGHT});
 
 Game::Game(){
     this->isRunning =false;
@@ -130,6 +132,8 @@ void Game::Update(){
 
     HandleCameraMovement();
     CheckCollisions();
+    PopulateQuadtree();
+    
 }
 
 void Game::Render(){
@@ -165,6 +169,19 @@ void Game::CheckCollisions() {
         isRunning = false;
     }
 }
+
+void Game::PopulateQuadtree() {
+    quad.clearMe();
+    // for (int i=0; i < manager.GetNonTileEntities().size(); i++) {
+    //     Entity* temp = manager.GetNonTileEntities().at(i);
+    //     quad.insert(temp);
+        
+    //     //check this
+    // }
+    cout << manager.GetNonTileEntities().size() << endl;
+}
+
+
 
 void Game::Destroy() {
     SDL_DestroyRenderer(renderer);
