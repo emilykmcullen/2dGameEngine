@@ -10,6 +10,7 @@ using namespace std;
 #include "./Components/KeyboardControlComponent.h"
 #include "./Map.h"
 #include "./Components/ColliderComponent.h"
+#include "./Components/TextLabelComponent.h"
 
 
 EntityManager manager;
@@ -37,6 +38,9 @@ void Game::Initialize(int width, int height) {
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0){
         cerr << "Error initializing SDL" << endl;
         return;
+    }
+    if (TTF_Init() !=0) {
+        cerr << "Error initializing SDL TTF" <<endl;
     }
     window = SDL_CreateWindow(
         NULL,
@@ -70,6 +74,8 @@ void Game::LoadLevel(int levelNumber){
     assetManager->AddTexture("tank-image", std::string("./assets/images/tank-big-right.png").c_str());
     assetManager->AddTexture("chopper-image", std::string("./assets/images/chopper-spritesheet.png").c_str());
     assetManager->AddTexture("jungle-tiletexture", std::string("./assets/tilemaps/jungle.png").c_str());
+    assetManager->AddFont("charriot-font", std::string("./assets/fonts/charriot.ttf").c_str(), 14);
+    // .c_str() because SDL expects c-style strings
 
     
     ::map = new Map("jungle-tiletexture", 1, 32);
@@ -85,6 +91,9 @@ void Game::LoadLevel(int levelNumber){
     player.AddComponent<SpriteComponent>("chopper-image", 2, 90, true, false);
     player.AddComponent<KeyboardControlComponent>("up", "right", "down", "left", "space");
     player.AddComponent<ColliderComponent>("player", 240, 106, 32, 32);
+
+    Entity& labelLevelName(manager.AddEntity("LabelLevelName", UI_LAYER));
+    labelLevelName.AddComponent<TextLabelComponent>(10, 10, "First level... ", "charriot-font", WHITE_COLOR);
     
     
     }
