@@ -25,7 +25,7 @@ class Quadtree {
     public:
         Quadtree(int level, SDL_Rect bounds); //does bounds need to be a ref?
         void clearMe();
-        void insert(Entity* entity);
+        void insert(Entity* entity, EntityManager& manager);
         std::vector<Entity*> retrieve(std::vector<Entity*> returnObjects, Entity* entity);
         
         

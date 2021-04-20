@@ -25,6 +25,8 @@ class Game {
         void LoadLevel(int levelNumber);
         void Initialize(int width, int height);
         void ProcessInput();
+        void ProcessNextLevel(int levelNumber);
+        void ProcessGameOver();
         void Update();
         void Render();
         void Destroy();

@@ -18,7 +18,7 @@ SDL_Renderer* Game::renderer;
 SDL_Event Game::event;
 SDL_Rect Game::camera = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 Map* map;
-Quadtree quad(0, SDL_Rect{0, 0, WINDOW_WIDTH, WINDOW_HEIGHT});
+// Quadtree quad(0, SDL_Rect{0, 0, WINDOW_WIDTH, WINDOW_HEIGHT});
 
 Game::Game(){
     this->isRunning =false;
@@ -132,7 +132,7 @@ void Game::Update(){
 
     HandleCameraMovement();
     CheckCollisions();
-    PopulateQuadtree();
+    // PopulateQuadtree();
     
 }
 
@@ -162,24 +162,37 @@ void Game::HandleCameraMovement() {
 }
 
 void Game::CheckCollisions() {
-    std::string collisionTagType = manager.CheckEntityCollisions(player);
-
-    if (collisionTagType.compare("enemy") == 0){
-        //TO DO: do something when collision is identified with an enemy
-        isRunning = false;
+    CollisionType collisionType = manager.CheckCollisions();
+    // cout << collisionType << endl;
+    if (collisionType == PLAYER_ENEMY_COLLISION) {
+        ProcessGameOver();
+    }
+    if (collisionType == PLAYER_LEVEL_COMPLETE_COLLISION) {
+        ProcessNextLevel(1);
     }
 }
 
-void Game::PopulateQuadtree() {
-    quad.clearMe();
-    // for (int i=0; i < manager.GetNonTileEntities().size(); i++) {
-    //     Entity* temp = manager.GetNonTileEntities().at(i);
-    //     quad.insert(temp);
-        
-    //     //check this
-    // }
-    cout << manager.GetNonTileEntities().size() << endl;
+void Game::ProcessNextLevel(int levelNumber) {
+    std::cout << "Next Level" << std::endl;
+    isRunning = false;
 }
+
+void Game::ProcessGameOver() {
+    std::cout << "Game Over" << std::endl;
+    isRunning = false;
+}
+
+// void Game::PopulateQuadtree() {
+//     quad.clearMe();
+//     for (int i=0; i < manager.GetNonTileEntities().size(); i++) {
+//         Entity* temp = manager.GetNonTileEntities().at(i);
+//         cout<< temp << endl;
+//         quad.insert(temp, manager);
+        
+//         //check this
+//     }
+    
+// }
 
 
 

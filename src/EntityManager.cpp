@@ -34,27 +34,39 @@ Entity& EntityManager::AddEntity(std::string entityName, LayerType layer){
 }
 
 
-
-//CHECK IF ENTITY HAS COLLIDER COMPONENT 
-//COULD CHANGE QUADTREE CLASS AND METHODS TO CONTAIN ENTITIES (instead of rects in the objects vector) AND TO ACCESS THE COLLIDER COMPONENTS DEST RECTANGLE
-//GET COMPONENT AND THEN GET THE DEST RECT
-
-//loop over all entities and check if they are colliding with the entity that is passed as a parameter (most probably the player)
-std::string EntityManager::CheckEntityCollisions(Entity& myEntity) const {
-    ColliderComponent* myCollider = myEntity.GetComponent<ColliderComponent>();
-    for (auto* entity: entities){
-        //dont check if colliding with itself and dont check collision with tiles
-        if (entity->name.compare(myEntity.name) != 0 && entity->name.compare("Tile") != 0){
-            if (entity->HasComponent<ColliderComponent>()){
-            ColliderComponent* otherCollider = entity->GetComponent<ColliderComponent>();
-            if (Collision::CheckRectangleCollision(myCollider->collider, otherCollider->collider)){
-                return otherCollider->colliderTag;
+CollisionType EntityManager::CheckCollisions() const {
+    for (int i = 0; i < entities.size() - 1; i++) {
+        auto& thisEntity = entities[i];
+        
+        //check current entity has collider component 
+        if (thisEntity->HasComponent<ColliderComponent>()) {
+            //get component
+            ColliderComponent* thisCollider = thisEntity->GetComponent<ColliderComponent>();
+            for (int j = i + 1; j < entities.size(); j++) {
+                //only check entities that are AFTER the current one (eg. 'to the right' of the current entity)
+                //do not need to check entities before current entity as this combination will have already been check
+                auto& thatEntity = entities[j];
+                if (thisEntity->name.compare(thatEntity->name) != 0 && thatEntity->HasComponent<ColliderComponent>()) {
+                    ColliderComponent* thatCollider = thatEntity->GetComponent<ColliderComponent>();
+                    if (Collision::CheckRectangleCollision(thisCollider->collider, thatCollider->collider)) {
+                        if (thisCollider->colliderTag.compare("player") == 0 && thatCollider->colliderTag.compare("enemy") == 0) {
+                            return PLAYER_ENEMY_COLLISION;
+                        }
+                        if (thisCollider->colliderTag.compare("player") == 0 && thatCollider->colliderTag.compare("projectile") == 0) {
+                            return PLAYER_PROJECTILE_COLLISION;
+                        }
+                        if (thisCollider->colliderTag.compare("enemy") == 0 && thatCollider->colliderTag.compare("friendly_projectile") == 0) {
+                            return ENEMY_PROJECTILE_COLLISION;
+                        }
+                        if (thisCollider->colliderTag.compare("player") == 0 && thatCollider->colliderTag.compare("level_complete") == 0) {
+                            return PLAYER_LEVEL_COMPLETE_COLLISION;
+                        }
+                    }
+                }
             }
         }
-        }
-        
     }
-    return std::string();
+    return NO_COLLISION;
 }
 
 void EntityManager::ListAllEntities() const {
