@@ -11,6 +11,7 @@ using namespace std;
 #include "./Map.h"
 #include "./Components/ColliderComponent.h"
 #include "./Components/TextLabelComponent.h"
+#include "./Components/ProjectileEmitterComponent.h"
 
 
 EntityManager manager;
@@ -74,6 +75,8 @@ void Game::LoadLevel(int levelNumber){
     assetManager->AddTexture("tank-image", std::string("./assets/images/tank-big-right.png").c_str());
     assetManager->AddTexture("chopper-image", std::string("./assets/images/chopper-spritesheet.png").c_str());
     assetManager->AddTexture("jungle-tiletexture", std::string("./assets/tilemaps/jungle.png").c_str());
+    assetManager->AddTexture("projectile-image", std::string("./assets/iamges/bullet-enemy.png").c_str());
+
     assetManager->AddFont("charriot-font", std::string("./assets/fonts/charriot.ttf").c_str(), 14);
     // .c_str() because SDL expects c-style strings
 
@@ -86,6 +89,13 @@ void Game::LoadLevel(int levelNumber){
     tankEntity.AddComponent<TransformComponent>(0,0,20,20,32,32,1);
     tankEntity.AddComponent<SpriteComponent>("tank-image");
     tankEntity.AddComponent<ColliderComponent>("enemy", 0, 0, 32, 32);
+
+    Entity& projectile(manager.AddEntity("projectile", PROJECTILE_LAYER));
+    projectile.AddComponent<TransformComponent>(150+16, 495+16, 0, 0, 4, 4, 1);
+    //plus 16 to put in the center of the tank
+    projectile.AddComponent<SpriteComponent>("projectile-image");
+    projectile.AddComponent<ColliderComponent>("projectile", 150+16, 495+16, 4,4);
+    projectile.AddComponent<ProjectileEmitterComponent>(50, 270, 200, true);
 
     player.AddComponent<TransformComponent>(240,106, 0,0,32,32,1);
     player.AddComponent<SpriteComponent>("chopper-image", 2, 90, true, false);
@@ -174,6 +184,9 @@ void Game::CheckCollisions() {
     CollisionType collisionType = manager.CheckCollisions();
     // cout << collisionType << endl;
     if (collisionType == PLAYER_ENEMY_COLLISION) {
+        ProcessGameOver();
+    }
+    if (collisionType == PLAYER_PROJECTILE_COLLISION) {
         ProcessGameOver();
     }
     if (collisionType == PLAYER_LEVEL_COMPLETE_COLLISION) {

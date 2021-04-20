@@ -19,6 +19,7 @@ class EntityManager {
         std::vector<Entity*> GetNonTileEntities() const;
         std::vector<Entity*> GetEntitiesByLayer(LayerType layer) const;
         CollisionType CheckCollisions() const;
+        void DestroyInactiveEntities();
 
 
         unsigned int GetEntityCount();
