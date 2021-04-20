@@ -36,8 +36,7 @@ Entity& EntityManager::AddEntity(std::string entityName, LayerType layer){
 
 CollisionType EntityManager::CheckCollisions() const {
     for (int i = 0; i < entities.size() - 1; i++) {
-        auto& thisEntity = entities[i];
-        
+        auto& thisEntity = entities[i];      
         //check current entity has collider component 
         if (thisEntity->HasComponent<ColliderComponent>()) {
             //get component

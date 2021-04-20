@@ -4,7 +4,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include "Quadtree.h"
 
 class AssetManager;
 
@@ -32,7 +31,6 @@ class Game {
         void Destroy();
         void HandleCameraMovement();
         void CheckCollisions();
-        void PopulateQuadtree();
 };
 
 #endif
