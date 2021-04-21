@@ -181,8 +181,7 @@ void Game::HandleCameraMovement() {
 }
 
 void Game::CheckCollisions() {
-    CollisionType collisionType = manager.CheckCollisions();
-    // cout << collisionType << endl;
+    CollisionType collisionType = manager.CheckCollisions(); 
     if (collisionType == PLAYER_ENEMY_COLLISION) {
         ProcessGameOver();
     }
