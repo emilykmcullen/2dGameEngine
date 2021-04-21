@@ -19,7 +19,8 @@ AssetManager* Game::assetManager = new AssetManager(&manager);
 SDL_Renderer* Game::renderer;
 SDL_Event Game::event;
 SDL_Rect Game::camera = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-Map* map;
+Entity* mainPlayer = NULL;
+Map* gameMap;
 
 
 Game::Game(){
@@ -61,52 +62,70 @@ void Game::Initialize(int width, int height) {
         return;
     }
 
-    LoadLevel(0);
-    // manager.ListAllEntities();
+    LoadLevel(1);
     isRunning = true;
     return;
 }
 
-Entity& player(manager.AddEntity("chopper", PLAYER_LAYER));
 
 void Game::LoadLevel(int levelNumber){
-    
-    //Start including new assets to the assetmanager list
-    assetManager->AddTexture("tank-image", std::string("./assets/images/tank-big-right.png").c_str());
-    assetManager->AddTexture("chopper-image", std::string("./assets/images/chopper-spritesheet.png").c_str());
-    assetManager->AddTexture("jungle-tiletexture", std::string("./assets/tilemaps/jungle.png").c_str());
-    assetManager->AddTexture("projectile-image", std::string("./assets/iamges/bullet-enemy.png").c_str());
 
-    assetManager->AddFont("charriot-font", std::string("./assets/fonts/charriot.ttf").c_str(), 14);
-    // .c_str() because SDL expects c-style strings
+    sol::state lua;
+    lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math);
+    //these libraries are now available to me
 
-    
-    ::map = new Map("jungle-tiletexture", 1, 32);
-    ::map->LoadMap("./assets/tilemaps/jungle.map", 25, 20);
+    std::string levelName = "Level" + std::to_string(levelNumber);
+    lua.script_file("./assets/scripts/" + levelName + ".lua");
 
-    //add entities and add components to entities
-    Entity& tankEntity(manager.AddEntity("tank", ENEMY_LAYER));
-    tankEntity.AddComponent<TransformComponent>(0,0,20,20,32,32,1);
-    tankEntity.AddComponent<SpriteComponent>("tank-image");
-    tankEntity.AddComponent<ColliderComponent>("enemy", 0, 0, 32, 32);
 
-    Entity& projectile(manager.AddEntity("projectile", PROJECTILE_LAYER));
-    projectile.AddComponent<TransformComponent>(150+16, 495+16, 0, 0, 4, 4, 1);
-    //plus 16 to put in the center of the tank
-    projectile.AddComponent<SpriteComponent>("projectile-image");
-    projectile.AddComponent<ColliderComponent>("projectile", 150+16, 495+16, 4,4);
-    projectile.AddComponent<ProjectileEmitterComponent>(50, 270, 200, true);
+    /***************************************************/
+    /* LOAD ASSETS FROM LUA CONFIG FILE */
+    /***************************************************/
 
-    player.AddComponent<TransformComponent>(240,106, 0,0,32,32,1);
-    player.AddComponent<SpriteComponent>("chopper-image", 2, 90, true, false);
-    player.AddComponent<KeyboardControlComponent>("up", "right", "down", "left", "space");
-    player.AddComponent<ColliderComponent>("player", 240, 106, 32, 32);
+    sol::table levelData = lua[levelName];
+    sol::table levelAssets = levelData["assets"];
+    //will make a table of all the data in the file
 
-    Entity& labelLevelName(manager.AddEntity("LabelLevelName", UI_LAYER));
-    labelLevelName.AddComponent<TextLabelComponent>(10, 10, "First level... ", "charriot-font", WHITE_COLOR);
-    
-    
+    unsigned int assetIndex = 0;
+    while (true) {
+        sol::optional<sol::table> existsAssetIndexNode = levelAssets[assetIndex];
+        //while loop will run undex index of assets doesnt exist
+        if (existsAssetIndexNode == sol::nullopt) {
+            break;
+        } else {
+            sol::table asset = levelAssets[assetIndex];
+            std::string assetType = asset["type"];
+            if ( assetType.compare("texture") == 0) {
+                std::string assetId = asset["id"];
+                std:string assetFile = asset["file"];
+                assetManager->AddTexture(assetId, assetFile.c_str());
+            }
+        }
+        assetIndex++;
     }
+
+     /***************************************************/
+    /* LOADS MAP FROM LUA CONFIG FILE */
+    /***************************************************/
+
+    sol::table levelMap = levelData["map"];
+    std::string mapTextureId = levelMap["textureAssetId"];
+    std::string mapFile = levelMap["file"];
+
+    gameMap = new Map(
+        mapTextureId,
+        static_cast<int>(levelMap["scale"]),
+        static_cast<int>(levelMap["tileSize"])
+    );
+
+    gameMap->LoadMap(
+        mapFile,
+        static_cast<int>(levelMap["mapSizeX"]),
+        static_cast<int>(levelMap["mapSizeY"])
+    );
+    
+    
+}
 
 void Game::ProcessInput(){
     SDL_PollEvent(&event);
@@ -168,16 +187,17 @@ void Game::Render(){
 }
 
 void Game::HandleCameraMovement() {
-    TransformComponent* mainPlayerTransform = player.GetComponent<TransformComponent>();
+    if (mainPlayer) {
+        TransformComponent* mainPlayerTransform = mainPlayer->GetComponent<TransformComponent>();
+        camera.x = mainPlayerTransform->position.x - (WINDOW_WIDTH / 2); //as soon as player reaches half of the window, only then the camera follows
+        camera.y = mainPlayerTransform->position.y - (WINDOW_HEIGHT / 2);
 
-    camera.x = mainPlayerTransform->position.x - (WINDOW_WIDTH / 2); //as soon as player reaches half of the window, only then the camera follows
-    camera.y = mainPlayerTransform->position.y - (WINDOW_HEIGHT / 2);
-
-    //clamping camera values so doesnt go offscreen
-    camera.x = camera.x < 0 ? 0 : camera.x;
-    camera.y = camera.y < 0 ? 0 : camera.y;
-    camera.x = camera.x > camera.w ? camera.w : camera.x;
-    camera.y = camera.y > camera.h ? camera.h : camera.y;
+        //clamping camera values so doesnt go offscreen
+        camera.x = camera.x < 0 ? 0 : camera.x;
+        camera.y = camera.y < 0 ? 0 : camera.y;
+        camera.x = camera.x > camera.w ? camera.w : camera.x;
+        camera.y = camera.y > camera.h ? camera.h : camera.y;
+    }
 }
 
 void Game::CheckCollisions() {

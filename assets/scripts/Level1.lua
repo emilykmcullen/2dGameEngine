@@ -8,7 +8,7 @@ Level1 = {
         [5] = { type="font", id = "charriot-font", file = "./assets/fonts/charriot.ttf", fontSize = 14 }
     },
     map = {
-        textureAssetId = "terrain-texture-night",
+        textureAssetId = "terrain-texture-day",
         file = "./assets/tilemaps/jungle.map",
         scale = 2,
         tileSize = 32,
