@@ -5,6 +5,8 @@
 #include "../EntityManager.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
+#include "../Components/ProjectileEmitterComponent.h"
+
 
 class KeyboardControlComponent: public Component {
     public: 
@@ -27,6 +29,7 @@ class KeyboardControlComponent: public Component {
         }
 
         std::string GetSDLKeyStringCode(std::string key){
+            //return values are the keys for these keys in SDL
             if (key.compare("up") == 0) return "1073741906";
             if (key.compare("down") == 0) return "1073741905";
             if (key.compare("left") == 0) return "1073741904";
@@ -38,6 +41,7 @@ class KeyboardControlComponent: public Component {
         void Initialize() override {
             transform = owner->GetComponent<TransformComponent>();
             sprite = owner->GetComponent<SpriteComponent>();
+            
         }
 
         void Update(float deltaTime) override {
@@ -65,7 +69,7 @@ class KeyboardControlComponent: public Component {
                     sprite->Play("LeftAnimation");
                 }
                 if (keyCode.compare(shootKey)==0){
-                    // to do 
+                    
                 }
             }
             if (Game::event.type == SDL_KEYUP){

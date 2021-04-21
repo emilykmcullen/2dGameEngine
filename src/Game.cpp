@@ -239,6 +239,7 @@ void Game::LoadLevel(int levelNumber){
                     projectileRange,
                     projectileShouldLoop
                 );
+                
                 projectile.AddComponent<ColliderComponent>(
                     "PROJECTILE",
                     parentEntityXPos,
@@ -338,6 +339,7 @@ void Game::CheckCollisions() {
     if (collisionType == PLAYER_PROJECTILE_COLLISION) {
         ProcessGameOver();
     }
+    
     if (collisionType == PLAYER_LEVEL_COMPLETE_COLLISION) {
         ProcessNextLevel(1);
     }

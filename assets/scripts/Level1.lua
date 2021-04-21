@@ -107,15 +107,6 @@ Level1 = {
                 collider = {
                     tag = "PLAYER"
                 },
-                projectileEmitter = {
-                    speed = 70,
-                    range = 300,
-                    angle = 180,
-                    width = 4,
-                    height = 4,
-                    shouldLoop = true,
-                    textureAssetId = "projectile-texture"
-                },
                 input = {
                     keyboard = {
                         up = "w",
