@@ -57,16 +57,16 @@ CollisionType EntityManager::CheckCollisions() const {
                 if (thisEntity->name.compare(thatEntity->name) != 0 && thatEntity->HasComponent<ColliderComponent>()) {
                     ColliderComponent* thatCollider = thatEntity->GetComponent<ColliderComponent>();
                     if (Collision::CheckRectangleCollision(thisCollider->collider, thatCollider->collider)) {
-                        if (thisCollider->colliderTag.compare("player") == 0 && thatCollider->colliderTag.compare("enemy") == 0) {
+                        if (thisCollider->colliderTag.compare("PLAYER") == 0 && thatCollider->colliderTag.compare("ENEMY") == 0) {
                             return PLAYER_ENEMY_COLLISION;
                         }
-                        if (thisCollider->colliderTag.compare("player") == 0 && thatCollider->colliderTag.compare("projectile") == 0) {
+                        if (thisCollider->colliderTag.compare("PLAYER") == 0 && thatCollider->colliderTag.compare("PROJECTILE") == 0) {
                             return PLAYER_PROJECTILE_COLLISION;
                         }
-                        if (thisCollider->colliderTag.compare("enemy") == 0 && thatCollider->colliderTag.compare("friendly_projectile") == 0) {
+                        if (thisCollider->colliderTag.compare("ENEMY") == 0 && thatCollider->colliderTag.compare("FRIENDLY_PROJECTILE") == 0) {
                             return ENEMY_PROJECTILE_COLLISION;
                         }
-                        if (thisCollider->colliderTag.compare("player") == 0 && thatCollider->colliderTag.compare("level_complete") == 0) {
+                        if (thisCollider->colliderTag.compare("PLAYER") == 0 && thatCollider->colliderTag.compare("LEVEL_COMPLETE") == 0) {
                             return PLAYER_LEVEL_COMPLETE_COLLISION;
                         }
                     }
@@ -88,6 +88,15 @@ void EntityManager::ListAllEntities() const {
 
 std::vector<Entity*> EntityManager::GetEntities() const {
     return entities;
+}
+
+Entity* EntityManager::GetEntityByName(std::string entityName) const {
+    for (auto* entity: entities) {
+        if (entity->name.compare(entityName) == 0) {
+            return entity;
+        }
+    }
+    return NULL;
 }
 
 std::vector<Entity*> EntityManager::GetNonTileEntities() const {

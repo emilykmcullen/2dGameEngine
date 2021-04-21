@@ -39,10 +39,10 @@ class ColliderComponent: public Component {
 
 
         //just used for viewing the bounding boxes, can be removed later
-        void Render() override {
-            SDL_SetRenderDrawColor(Game::renderer, 255,255,255,255);
-            SDL_RenderDrawRect(Game::renderer, &destinationRectangle);
-            SDL_RenderDrawRect(Game::renderer, &sourceRectangle);
+        // void Render() override {
+        //     SDL_SetRenderDrawColor(Game::renderer, 255,255,255,255);
+        //     SDL_RenderDrawRect(Game::renderer, &destinationRectangle);
+        //     SDL_RenderDrawRect(Game::renderer, &sourceRectangle);
 
-        }
+        // }
 };
